@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -27,6 +28,7 @@ var staticFiles embed.FS
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
+
 		log.Printf("warning: assuming default configuration. .env unreadable: %v", err)
 	}
 
@@ -89,8 +91,9 @@ func main() {
 
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
-		Addr:    ":" + port,
-		Handler: router,
+		Addr:              ":" + port,
+		Handler:           router,
+		ReadHeaderTimeout: time.Duration(10000),
 	}
 
 	log.Printf("Serving on port: %s\n", port)
